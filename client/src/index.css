@@ -1,0 +1,74 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
+@import "tailwindcss"; 
+
+@custom-variant dark (&:where(.dark,.dark *));
+
+*{
+  font-family: "Outfit", sans-serif;
+}
+@theme{
+  --color-primary:#E6CCFF;
+}
+
+/* Hide scrollbar but keep scroll working */
+::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
+}
+
+.reset-tw p,
+.reset-tw ul,
+.reset-tw ol,
+.reset-tw li {
+  all: revert;
+}
+
+.reset-tw ul {
+  list-style-type: disc;
+  padding-left: 1.25rem;
+}
+
+.reset-tw ol {
+  list-style-type: disc;   /* force bullets */
+  padding-left: 1.25rem;
+}
+
+/* Ye element ko:
+
+browser user-agent stylesheet
+
+inheritance
+
+Tailwind ke utilities
+
+sab ko wapas default pe le jaata hai.
+
+👉 Problem ye hai:
+Tailwind ka base + preflight bhi reset ho jaata hai
+niche wala .reset-tw:not(pre) :not(code)
+*/
+.reset-tw :not(pre) :not(code){
+  all:revert;
+}
+
+
+/*
+user messages → bullets
+AI responses → numbering
+
+.reset-tw ul {
+  list-style: disc;
+}
+
+.reset-tw ol {
+  list-style: decimal;    //normal numbering 
+}
+
+*/
+
+.loader div:nth-child(2){
+  animation-delay: 0.2s;
+}
+.loader div:nth-child(3){
+  animation-delay: 0.4s;
+}
