@@ -5,6 +5,7 @@
 =>install npm moment packge 
 =>install npm react-markdown packge
 =>install npm prismjs packge
+=>npm install axios react-hot-toast
 
  packges needed in server
 =>npm init -y
