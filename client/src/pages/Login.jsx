@@ -5,23 +5,34 @@ import { useNavigate } from "react-router-dom";
 
 
 const Login = () => {
-  const navigate = useNavigate();
-  const [state, setState] =useState("login");
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+  const navigate = useNavigate();//👉 login ke baad redirect
+  const [state, setState] =useState("login");//state → login or register mode
+  const [name, setName] = useState("");//name → only in signup
+  const [email, setEmail] = useState("");//email/password → auth data
   const [password, setPassword] = useState("");
   const {axios,setToken}=useAppContext()
+  // 👉 axios → API
+  // 👉 setToken → login success
 
   const handleSubmit=async (e)=>{
-    e.preventDefault();
-    const url=state==="login"?'/api/user/login':'/api/user/register'
+    e.preventDefault();//👉 form reload prevent
+    // 🔥 Dynamic URL
+    const url=state==="login"?'/api/user/login':'/api/user/register'//👉 same form → 2 APIs
     try {
-      const {data}=await axios.post(url,{name,email,password})
+      // 🌐 API Call
+      const {data}=await axios.post(url,{name,email,password})//👉 backend: login / register
       if(data.success){
         setToken(data.token)
         localStorage.setItem('token',data.token)
         navigate('/')
       }
+      // 💥 Flow:
+      // token set in context
+      // save in localStorage
+      // AppContext trigger
+      // user fetch
+      // UI switch → main app
+      // 🔥 full auth cycle
       else{
          toast.error(data.message)
       }
@@ -35,7 +46,7 @@ const Login = () => {
         <span className="text-purple-700">User</span>{" "}
         {state === "login" ? "Login" : "Sign Up"}
       </p>
-      {state === "register" && (
+      {state === "register" && (//👉 sirf signup me name
         <div className="w-full">
           <p>Name</p>
           <input
@@ -84,7 +95,7 @@ const Login = () => {
         <p>
           Create an account?{" "}
           <span
-            onClick={() => setState("register")}
+            onClick={() => setState("register")}//👉 same form reuse
             className="text-purple-700 cursor-pointer"
           >
             click here
@@ -99,3 +110,19 @@ const Login = () => {
 };
 
 export default Login;
+// 🧠 FULL FLOW
+
+// User → form fill
+// → submit
+// → API
+// → token
+// → AppContext
+// → user fetch
+// → UI change
+
+// 👉 what Login.jsx do?
+
+// login/register toggle
+// API call
+// token store
+// app unlock

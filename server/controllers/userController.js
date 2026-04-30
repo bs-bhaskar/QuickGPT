@@ -12,21 +12,28 @@ const generateToken=(id)=>{
         expiresIn:'30d'
     })
 }
+// {id} → payload (user id)
+// JWT_SECRET → secret key
+// 30d → expiry
+// 🔥 Result:
+// 👉 get token string 
+// 👉 store in frontend
 
 // API to register User
-export const registerUser= async (req,res)=>{
-    const {name,email,password}=req.body;
+export const registerUser= async (req,res)=>{//👉 API:POST /api/user/register
+    const {name,email,password}=req.body;//data
     try {
-        const userExist=await User.findOne({email})
+        const userExist=await User.findOne({email})//check existing user
         if(userExist){
-            return res.json({success: false, message:"User already exists"})
+            return res.json({success: false, message:"User already exists"})//if already there:
         }
 
-        const user=await User.create({name,email,password})
+        const user=await User.create({name,email,password})//create user
+        //👉 password hashing model me ho raha hai (pre-save hook)
 
-        const token=generateToken(user._id)
+        const token=generateToken(user._id)//token
 
-        res.json({success:true, token})  
+        res.json({success:true, token})//response  
         // res.json({success:true, token:token, message: "User registered successfully"})
 
     } catch (error) {
@@ -35,12 +42,12 @@ export const registerUser= async (req,res)=>{
 }
 
 //API to login user
-export const loginUser= async(req,res)=>{
-    const {email,password}=req.body
+export const loginUser= async(req,res)=>{//👉 API:POST /api/user/login
+    const {email,password}=req.body//input
     try {
-        const user=await User.findOne({email})
+        const user=await User.findOne({email})//find user
         if(user){
-            const isMatch = await bcrypt.compare(password, user.password)
+            const isMatch = await bcrypt.compare(password, user.password)//compare password
             if(isMatch){
                 const token=generateToken(user._id)
                 return res.json({success:true,token})
@@ -53,8 +60,9 @@ export const loginUser= async(req,res)=>{
 }
 
 //API to create user Data
-export const getUser= async(req,res)=>{
+export const getUser= async(req,res)=>{//👉 API:GET /api/user/data
     try {
+        // 👉 user already attached by auth middleware. only return it
         const user=req.user
         return res.json({success:true,user})
     } catch (error) {
@@ -62,12 +70,12 @@ export const getUser= async(req,res)=>{
     }  
 }
 //API to get published images
-export const getPublishedImages=async (req,res) => {
+export const getPublishedImages=async (req,res) => {//👉 API:GET /api/user/published-images
     try {
-        const publishedImageMessages=await Chat.aggregate([
-            {$unwind:"$messages"},
+        const publishedImageMessages=await Chat.aggregate([// MongoDB Aggregation
+            {$unwind:"$messages"},//👉 bracks messages array
             {
-                $match:{
+                $match:{//filter
                     "messages.isImage":true,
                     "messages.isPublished":true
                 }
@@ -80,8 +88,23 @@ export const getPublishedImages=async (req,res) => {
                 }
             }
         ])
-        res.json({success:true,images:publishedImageMessages.reverse()})
+        res.json({success:true,images:publishedImageMessages.reverse()})//👉 latest first
     } catch (error) {
         return res.json({success:false,message:error.message})
     }
 }
+// 🧠 FULL FLOW
+// User → login
+// → token
+// → auth middleware
+// → req.user
+// ↓
+// Community page
+// → aggregation
+// → images
+
+// 👉 what userController do?
+// user register
+// login
+// auth data
+// community images
